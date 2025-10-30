@@ -24,7 +24,7 @@ Develop a modern data warehouse using SQL Server to consolidate sales data, enab
 - Documentation: Provide clear documentation of the data model to support both business stakeholders and analytics teams.
 
 
-### Understanding Data and Output
+## Understanding Data and Output
 
 
 ## Architecture
@@ -58,8 +58,91 @@ Separatin of concern - Making sure no layer does the job of another layer, this 
 
 
 ## Project Plan 
-- Define Naming Convention
-  This would pkaced as a stand alone documenty in this repository
+Using Notion, every Epic and task is documented and in order
 
-               
+<img width="951" height="922" alt="image" src="https://github.com/user-attachments/assets/800a3752-d0d8-4b7f-8842-9bd962b2edac" />
+
+
+### Define Naming Convention
+  This would placed as a stand alone document in this repository
+
+### Create Database & Schema using SSMS
+  Database and schemas are created and named 'init_database.sql'
+
+### Building  Bronze Layer
+First things first is to understand the source systems by analyzing before any coding so as to undertsand how to ingest the data, then validate while also dosumenting.
+
+#### Analyzing
+This analysis can include sitting with source ssytem and analyzing the business context and ownership of the data by asking such questions 
+- Business Context & Ownership
+  - Who owns the data
+  - What business Proecess does it support e,g logistics of finance reporting
+  - Systems & Data documentation
+  - Data Model & Data Catalog
+
+- Architecture & Technolgy Stack
+  - How is data stored (SQL server, Oracle, AWS, Azure...)
+  - What are the integration capabilities? (API, Kafka, File extract, Direct DB)
+ 
+- Extract & Load
+  - Incremenata v Full load
+  - Data Scope & Historic needs
+  - What is the expected size of the extracts
+  - Are there any data volume limitations
+  - How to avoid impacting the source system's perfomance
+  - Autheneticationa and authorization (tokens, SSH keys, VPN, IP whitelisting)
+  
+#### Coding (Ingestion) & Validating (Data Completness & schema checks)
+stored as 
+  1. 'ddl_bronze.sql' in docs for Data Definition Language: it’s the part of SQL used to define, create, modify, or remove database structures.
+  2. 'proc_load_bronze.sql' in docs for Proc = short for “Stored Procedure.” A stored procedure is a saved SQL script that can be executed by name, like a function in programming.
+
+Going by what whas decided in our desing of architecture
+  - fULL LOAD (Truncate and Insert)
+  - No transformation
+  - No data model 
+   
+#### Documentation (Data flow)
+
+  
+#### Commit
+
+  
+### Building  Silver Layer
+First things first is to 
+
+#### Analyzing
+
+  
+#### Coding (Data Cleaning)
+
+  
+#### Validating (Data Correctness)
+
+  
+#### Documentation
+
+  
+#### Commit
+
+
+
+### Building  Gold Layer
+First things first is to 
+
+#### Analyzing
+
+  
+#### Coding (Data Integration)
+
+  
+#### Validating (Data Integration Checks)
+
+  
+#### Documentation (Data Modelling of star schema)
+
+  
+#### Documentation (Data Catalog)
+
+
 
