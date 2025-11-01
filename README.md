@@ -69,7 +69,7 @@ Using Notion, every Epic and task is documented and in order
 ### Create Database & Schema using SSMS
   Database and schemas are created and named 'init_database.sql'
 
-### Building  Bronze Layer
+### Building Layers
 First things first is to understand the source systems by analyzing before any coding so as to undertsand how to ingest the data, then validate while also dosumenting.
 
 #### Analyzing
@@ -92,57 +92,12 @@ This analysis can include sitting with source ssytem and analyzing the business 
   - How to avoid impacting the source system's perfomance
   - Autheneticationa and authorization (tokens, SSH keys, VPN, IP whitelisting)
   
-#### Coding (Ingestion) & Validating (Data Completness & schema checks)
+#### Coding - Ingestions, Transfromations, Validations and Loads (Data Completness & schema checks)
 stored as 
   1. 'ddl_bronze.sql' in docs for Data Definition Language: it’s the part of SQL used to define, create, modify, or remove database structures.
-  2. 'proc_load_bronze.sql' in docs for Proc = short for “Stored Procedure.” A stored procedure is a saved SQL script that can be executed by name, like a function in programming.
+  2. 'Data Cleaning run through' showing step by step data cleaning involved in process
+  3. 'proc_load_bronze.sql' in docs for Proc = short for “Stored Procedure.” A stored procedure is a saved SQL script that can be executed by name, like a function in programming.
 
-Going by what whas decided in our desing of architecture
-  - fULL LOAD (Truncate and Insert)
-  - No transformation
-  - No data model 
    
-#### Documentation (Data flow)
-
   
-#### Commit
-
-  
-### Building  Silver Layer
-First things first is to 
-
-#### Analyzing
-
-  
-#### Coding (Data Cleaning)
-
-  
-#### Validating (Data Correctness)
-
-  
-#### Documentation
-
-  
-#### Commit
-
-
-
-### Building  Gold Layer
-First things first is to 
-
-#### Analyzing
-
-  
-#### Coding (Data Integration)
-
-  
-#### Validating (Data Integration Checks)
-
-  
-#### Documentation (Data Modelling of star schema)
-
-  
-#### Documentation (Data Catalog)
-
-
 
