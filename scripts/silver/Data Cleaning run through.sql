@@ -132,7 +132,7 @@ FROM bronze.crm_cust_info;
 
 
 --VALIDATION
--- Now to Validate the data is clean, run all the checks previously done on the data in bronze to confirm no issues found 
+-- Now to Validate the data is clean, run all the checks previously done on the data in bronze to confirm no issues found using silver.
 
 -- 1. Validate no Null or duplicate keys
 SELECT
@@ -205,7 +205,6 @@ WHERE flag_last = 1;
 
 
 
-
 /*
 --------------------------------------------------------------------
 Explore ---> CLean/Transform
@@ -213,7 +212,6 @@ Explore ---> CLean/Transform
 Product Information [crm_prd_info]
 --------------------------------------------------------------------
 */
-
 
 -- 1. Checking for null, duplicate or error in Primary keys 
 
@@ -244,7 +242,6 @@ Two(2) different columsn would be derived from prd_key
 A.Category id part from the prd_key column using SUBSTRING
 	and also replace '-' with '_' as state in the example above
 	
-
 B.Extracting the remaing part of prd_key to be the product key without the category key 
 	attached that can be used to join sls_prd_key of 'crm-sales_details'
 	However the second part of the string length is not defined so SUBSTRING and LEN would be used
@@ -264,7 +261,6 @@ WHERE REPLACE(SUBSTRING(prd_key,1,5),'-','_') NOT IN
 	(SELECT distinct id FROM bronze.erp_px_cat_g1v2);
 -- Cat_id 'CO_PE' not availavle in id column of table erp_px_cat_g1v2
 -- It is probably correct as 
-
 
 
 -- 2. Checking for Unwanted Spaces in String Values
@@ -294,7 +290,7 @@ FROM bronze.crm_prd_info; -- Values of NULL, M, R, S, T found
 -- Lookin at the table, we can see that the start date is after the end date, whch is clearly an issue
 SELECT *
 FROM bronze.crm_prd_info
-
+WHERE prd_end_dt < prd_start_dt;
 /*
 prd_id	prd_key			prd_nm					prd_cost	prd_line	prd_start_dt		prd_end_dt
 212		AC-HE-HL-U509-R	Sport-100 Helmet- Red	12			S 			01/07/2011 00:00	28/12/2007 00:00 --- We can see that end date is younger that start date which is such a problem, has to be fixed.
@@ -304,28 +300,43 @@ prd_id	prd_key			prd_nm					prd_cost	prd_line	prd_start_dt		prd_end_dt
 Looking for ways to solve this by extracting to excel and checking different solutions,
 best solution was to not work with the 'prd_end_dt' but rather create new 'prd_end_dt' from 'prd_start_dt'
 
-=
+new 'prd_end_dt' = date of next start date - 1 ) day before the next start date) 
 
 prd_id	prd_key			prd_nm					prd_cost	prd_line	prd_start_dt		prd_end_dt
 212		AC-HE-HL-U509-R	Sport-100 Helmet- Red	12			S 			01/07/2011 00:00	30/06/2012 00:00     --- We can see that end date is younger that start date which is such a problem, has to be fixed.
 213		AC-HE-HL-U509-R	Sport-100 Helmet- Red	14			S 			01/07/2012 00:00	30/06/2013 00:00
 214		AC-HE-HL-U509-R	Sport-100 Helmet- Red	13			S 			01/07/2013 00:00	NULL
 
+
+Also to convert date colun form DATETIME TO DATE as the time portion is not really recorded
 */
+SElECT
+CAST(prd_start_dt AS DATE),
+CAST(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt ASC) - 1 AS DATE) prd_end_dt_test -- This gets the start date as a day just befor the begining of a new start date to avoid overlapping -- SCD2
+FROM bronze.crm_prd_info;
 
 
+-- Looking at the DDL for silver layer table, we can see new columns were derived and date formats changed and this has to be accounted for, to load/insert data into
+-- We have to therefore go back and correct this in DDL
 
+--Bringing the full transformation all together for load 
 
-
-
---Bringing the full transformation all together
-
+INSERT INTO silver.crm_prd_info (
+	prd_id,
+	cat_id,
+	prd_key,
+	prd_nm,
+	prd_cost,
+	prd_line,
+	prd_start_dt,
+	prd_end_dt
+)
 SELECT
 prd_id,
-REPLACE(SUBSTRING(prd_key,1,5),'-','_') cat_id, -- Deriving category id 
-SUBSTRING(prd_key,7,LEN(prd_key)) prd_key,-- Deriving pure prd_key so as to link to sls_prd_key
+REPLACE(SUBSTRING(prd_key,1,5),'-','_') cat_id, -- Extract category id 
+SUBSTRING(prd_key,7,LEN(prd_key)) prd_key,-- Extract product key so as to link to sls_prd_key
 prd_nm,
-ISNULL(prd_cost, 0) prd_cost, --remove nulls from product cost
+ISNULL(prd_cost, 0) prd_cost, -- remove nulls from product cost
 CASE 
 	UPPER(TRIM(prd_line))
 	WHEN 'M' THEN 'Mountain'
@@ -333,8 +344,22 @@ CASE
 	WHEN 'S' THEN 'Other Sales'
 	WHEN 'T' THEN 'Touring'
 	ELSE 'n/a'
-END AS prd_line, --Gives meaningful value to prd_line and renames NULL values
-prd_start_dt,
-prd_end_dt
-FROM bronze.crm_prd_info
+END AS prd_line, --Map product linecoes to descriptive meangiful values and also renames NULL values
+CAST(prd_start_dt AS DATE) prd_start_dt,
+CAST(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt ASC) - 1 AS DATE) prd_end_dt--Calculate end date as one day befor ethe next start date
+FROM bronze.crm_prd_info;
 
+
+--VALIDATION
+-- Now to Validate the data is clean, run all the checks previously done again on the data in bronze to confirm no issues found using silver.
+
+
+/*
+--------------------------------------------------------------------
+Explore ---> CLean/Transform
+--------------------------------------------------------------------
+Sales Details Information [crm_sales_details]
+--------------------------------------------------------------------
+*/
+
+-- 1.
