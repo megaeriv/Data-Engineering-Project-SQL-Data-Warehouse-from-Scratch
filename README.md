@@ -91,12 +91,24 @@ This analysis can include sitting with source ssytem and analyzing the business 
   - Are there any data volume limitations
   - How to avoid impacting the source system's perfomance
   - Autheneticationa and authorization (tokens, SSH keys, VPN, IP whitelisting)
+
+
   
 #### Coding - Ingestions, Transfromations, Validations and Loads (Data Completness & schema checks)
-stored as 
-  1. 'ddl_bronze.sql' in docs for Data Definition Language: it’s the part of SQL used to define, create, modify, or remove database structures.
-  2. 'Data Cleaning run through' showing step by step data cleaning involved in process
-  3. 'proc_load_bronze.sql' in docs for Proc = short for “Stored Procedure.” A stored procedure is a saved SQL script that can be executed by name, like a function in programming.
+To develop effective data cleaning transformations and stored procedures, it’s essential to first understand the data flow and the relationships between datasets.
+
+- # Data Flow
+<img width="917" height="527" alt="Data Flow" src="https://github.com/user-attachments/assets/8398abfb-bbd4-416f-98c9-2d7c5f9f56df" />
+
+
+- # Silver Integration Layer
+<img width="1055" height="652" alt="Silver Integration Model" src="https://github.com/user-attachments/assets/15471251-0fb9-437d-b8c2-1bc15702c8bf" />
+
+  
+Scripts stored as below in scripts folders
+  1. 'ddl_______.sql' in docs for Data Definition Language: it’s the part of SQL used to define, create, modify database structures.
+  2. 'Data Cleaning run through' showing step by step data cleaning involved in building each layer 
+  3. 'proc_______.sql' in docs for Proc = short for “Stored Procedure.” A stored procedure is a saved SQL script that can be executed by name, like a function in programming.
 
    
   
