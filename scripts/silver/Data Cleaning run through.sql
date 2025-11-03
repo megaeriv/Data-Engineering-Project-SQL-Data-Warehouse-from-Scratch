@@ -1,33 +1,35 @@
 /*
-First things first, we need to detect the quality issues in the bronze by exploring 
-before writing any transformation scripts 
+
+
+--------------------------------------------------------------------------
+Explore ---> CLean/Transform
+--------------------------------------------------------------------------
+First things first, we need to detect the quality issues in the bronze by 
+exploring before writing any transformation scripts 
 
 Exploration of Bronze layer to identify the issues needed to be cleaned up 
+
+For all transfpormations, you explore fro erros and clean column by column 
+but these explorations and transformations has been split into groups like 
+below just to follow a form of format
 
 CHECKS
     1. Check for Nulls or duplication in Primary Keys
     2. Checking for unwanted spaces in string values 
     3. Standardization and Consistency
-
-
---------------------------------------------------------------------
-Explore ---> CLean/Transform
---------------------------------------------------------------------
-Customer Information [crm_cust_info]
---------------------------------------------------------------------
 */
 
 
+--------------------------------------------------------------------
+-- Customer Information [crm_cust_info]
+--------------------------------------------------------------------
 -- 1. Checking for null or duplicate keys 
-	-- Expectation: errors found
-
 SELECT
 cst_id,
 COUNT(*)
 from bronze.crm_cust_info
 GROUP bY cst_id
 HAVING COUNT(*) > 1 or cst_id IS NULL
-
 -- Quite a few duplicated primary keys and null values.
 -- Deep dive into those duplicated and null keys 
 
@@ -35,7 +37,6 @@ SELECT
 *
 FROM bronze.crm_cust_info
 WHERE cst_id = 29466;
-
 -- We could see that for that customer id, there were several records with the latest one the most complete
 -- Ranking would be done and the most recent record for that customer would be chosen
 
@@ -58,18 +59,15 @@ FROM (
 )t
 WHERE flag_last = 1
 
-
 -- 2. Checking for Unwanted Spaces in String Values
 SELECT cst_firstname
 FROM bronze.crm_cust_info;
-
 -- clear leading spaces were seen in first couple of records
 -- Query created to pick out those records as seen below, by selecting those not the same as them after running TRIM 
 
 SELECT cst_firstname
 FROM bronze.crm_cust_info
 WHERE cst_firstname != TRIM(cst_firstname); --  issues found
-
 -- also for last name and all string values
 SELECT cst_lastname
 FROM bronze.crm_cust_info
@@ -88,7 +86,7 @@ FROM bronze.crm_cust_info
 WHERE cst_marital_status != TRIM(cst_marital_status); -- no issues
 
 
---TRANSFORMATION
+-- TRANSFORMATION
 -- TRIM the 2 columns as such
 SELECT
 	cst_id,
@@ -102,16 +100,14 @@ FROM bronze.crm_cust_info;
 
 -- 3.Data Standardization & Consistency
 -- Looking at some of the columns like: marital status and Gender column 
---Needs to be checked to ensure consistency as this column allows for limited input variales
-
+-- Needs to be checked to ensure consistency as this column allows for limited input variales
 SELECT DISTINCT cst_gndr
 FROM bronze.crm_cust_info
-
 -- Distinct values 'NULL', 'F' and 'M' are present but we would like to ensure we store meaniful values
 -- We rather turn 'F' and 'M' to Female and Male so we store meaniful values and this would be a rule to be consistent by 
 -- Replacing 'NULL' with default values as well
--- TRANSFROMATION
 
+-- TRANSFROMATION
 SELECT
 	CASE 
 		WHEN UPPER(TRIM(cst_gndr)) = 'F' THEN 'Female' -- Ensuring nothing is left out, lowercase f or f with leading or trailing spaces
@@ -121,7 +117,6 @@ SELECT
 FROM bronze.crm_cust_info;
 
 -- same thing to be done for marital status which has only 3 possibilities of : 'S', 'NULL','M'
-
 SELECT
 	CASE 
 		WHEN UPPER(TRIM(cst_marital_status)) = 'S' THEN 'Single'
@@ -142,9 +137,7 @@ from silver.crm_cust_info
 GROUP bY cst_id
 HAVING COUNT(*) > 1 or cst_id IS NULL; -- No duplicate issues found
 
-
 -- 2. Validate Removed Unwanted Spaces in String Values
-
 SELECT cst_firstname
 FROM silver.crm_cust_info
 WHERE cst_firstname != TRIM(cst_firstname); --  no trailing or leading spaces issue found
@@ -153,9 +146,7 @@ SELECT cst_lastname
 FROM silver.crm_cust_info
 WHERE cst_lastname != TRIM(cst_lastname);-- no trailing or leading spaces issue found
 
-
 -- 3.Validate Data Standardization & Consistency
-
 SELECT DISTINCT cst_gndr
 FROM silver.crm_cust_info; ---- No issues found, data is stored as meaingful records
 
@@ -165,10 +156,8 @@ FROM silver.crm_cust_info; ---- No issues found, data is stored as meaingful rec
 SELECT * FROM silver.crm_cust_info;
 
 
-
-
+--FULL TRANDFORMATIONS
 -- Now bringing all the transformation all together to Insert this cleaned customer information data into silver layer tables
-
 INSERT INTO silver.crm_cust_info (
 	cst_id,
     cst_key,
@@ -204,17 +193,10 @@ FROM (
 WHERE flag_last = 1;
 
 
-
-/*
 --------------------------------------------------------------------
-Explore ---> CLean/Transform
+-- Product Information [crm_prd_info]
 --------------------------------------------------------------------
-Product Information [crm_prd_info]
---------------------------------------------------------------------
-*/
-
 -- 1. Checking for null, duplicate or error in Primary keys 
-
 SELECT 
 prd_id,
 COUNT(*)
@@ -226,7 +208,6 @@ HAVING COUNT(*) > 1 OR prd_id IS NULL; ----- No Duplicates or null keys found
 SELECT 
 prd_key
 FROM bronze.crm_prd_info;
-
 --The key appear like 'CO-RF-FR-R92B-58', seeming like the combination of the id of product category table 'erp_px_cat_g1v2'
 -- and sales_prd_key of 'crm_sales_details' table which would be explore
 
@@ -262,21 +243,18 @@ WHERE REPLACE(SUBSTRING(prd_key,1,5),'-','_') NOT IN
 -- Cat_id 'CO_PE' not availavle in id column of table erp_px_cat_g1v2
 -- It is probably correct as 
 
-
 -- 2. Checking for Unwanted Spaces in String Values
 SELECT prd_nm
 FROM bronze.crm_prd_info
 WHERE prd_nm != TRIM(prd_nm); -- No trimming needed, no record where name not = to trimmed name(meaning the name = trimmed name so no trailling spaces)
-
 
 -- 3. Checking for NULLS or Negative Numbers 
 SELECT prd_cost
 FROM bronze.crm_prd_info
 WHERE prd_cost IS NULL 
 	OR prd_cost < 0; --No Negative costs found, some NULLS found however and this affects calculation
---TRANSFORMATION
---Use ISNULL function to replace NULL values with '0'
-
+-- TRANSFORMATION
+-- Use ISNULL function to replace NULL values with '0'
 
 -- 4. Data Standardization & Consistency
 SELECT DISTINCT 
@@ -284,7 +262,6 @@ prd_line
 FROM bronze.crm_prd_info; -- Values of NULL, M, R, S, T found
 --TRANSFORMATION
 --NULL values to be relplaced and to transfrom single inputs like 'M' to meanigful values like 'Mountain' as stated in naming convention
-
 
 -- 5. Checking for errors in DATE COLUMS
 -- Lookin at the table, we can see that the start date is after the end date, whch is clearly an issue
@@ -307,7 +284,6 @@ prd_id	prd_key			prd_nm					prd_cost	prd_line	prd_start_dt		prd_end_dt
 213		AC-HE-HL-U509-R	Sport-100 Helmet- Red	14			S 			01/07/2012 00:00	30/06/2013 00:00
 214		AC-HE-HL-U509-R	Sport-100 Helmet- Red	13			S 			01/07/2013 00:00	NULL
 
-
 Also to convert date colun form DATETIME TO DATE as the time portion is not really recorded
 */
 SElECT
@@ -316,11 +292,10 @@ CAST(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt ASC) - 
 FROM bronze.crm_prd_info;
 
 
+-- FULL TRANDFORMATIONS
 -- Looking at the DDL for silver layer table, we can see new columns were derived and date formats changed and this has to be accounted for, to load/insert data into
 -- We have to therefore go back and correct this in DDL
-
---Bringing the full transformation all together for load 
-
+-- Bringing the full transformation all together for load 
 INSERT INTO silver.crm_prd_info (
 	prd_id,
 	cat_id,
@@ -350,16 +325,82 @@ CAST(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt ASC) - 
 FROM bronze.crm_prd_info;
 
 
---VALIDATION
--- Now to Validate the data is clean, run all the checks previously done again on the data in bronze to confirm no issues found using silver.
+--------------------------------------------------------------------
+-- Sales Details Information [crm_sales_details]
+--------------------------------------------------------------------
+SELECT
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+sls_order_dt,
+sls_ship_dt,
+sls_due_dt,
+sls_sales,
+sls_quantity,
+sls_price
+FROM bronze.crm_sales_details;
+
+-- 1. Checking for null, duplicate or error in Primary keys 
+-- we first check the integrity of the columns by checking if these keys are in the customer and product tables as we;;
+SELECT
+sls_prd_key,
+sls_cust_id
+FROM bronze.crm_sales_details
+WHERE sls_prd_key NOT IN (SELECT prd_key FROM silver.crm_prd_info) -- no issues, all sls_prd_key keys found in transformed layer of product information. i.e prd_key
+	OR sls_cust_id NOT IN (SELECT cst_id FROM silver.crm_cust_info)-- no issues, all keys found in transformed layer of cusomer information i.e cst_id
+
+-- 2. Checking for Unwanted Spaces in String Values
+SELECT
+*
+FROM bronze.crm_sales_details
+WHERE sls_ord_num != TRIM(sls_ord_num); -- no issues
+
+-- 3. Checking for NULLS or Negative Numbers 
+-- Here mostly looking at sales quantity columns
+-- Business ules to follow
+		-- Sales = Price * Quantity
+		-- Sales cannot be Zeros, nulls oe negative
+SELECT
+sls_sales,
+sls_quantity,
+sls_price
+FROM bronze.crm_sales_details
+	WHERE sls_sales != sls_quantity * sls_price 
+		--OR sls_sales <= 0 
+		--OR sls_sales IS NULL
 
 
-/*
---------------------------------------------------------------------
-Explore ---> CLean/Transform
---------------------------------------------------------------------
-Sales Details Information [crm_sales_details]
---------------------------------------------------------------------
-*/
+-- 4. Data Standardization & Consistency
+-- Date columns to be looked at -('sls_order_dt', 'sls_ship_dt', sls_due_dt')
+-- The dates appear as integers, have to convert to dates
+-- First things first is to check for invalid dates
+SELECT
+	NULLIF(sls_order_dt, 0) sls_order_dt
+FROM bronze.crm_sales_details
+WHERE sls_order_dt <= 0 -- issues found | some dates recorded as 0
+	OR LEN(sls_order_dt) != 8 --issues found | Length of each number should be 8 (4 for year, 2 for month, 2 for day), not more or less
+	OR sls_order_dt >  20500101 -- no issues found | date not exceeding boundary of company data
+	OR sls_order_dt <  19000101; -- no issues found | date not exceeding boundary of company data
 
--- 1.
+--Check to see right validity with the dates
+SELECT
+*
+FROM bronze.crm_sales_details
+WHERE sls_order_dt > sls_ship_dt OR sls_order_dt > sls_due_dt; -- no issues found 
+
+--TRANSFORMATION
+SELECT
+CASE 
+	WHEN sls_order_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_order_dt AS VARCHAR) AS DATE)
+END sls_order_dt,
+CASE 
+	WHEN sls_ship_dt = 0 OR LEN(sls_ship_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_ship_dt AS VARCHAR) AS DATE)
+END sls_ship_dt,
+CASE 
+	WHEN sls_due_dt = 0 OR LEN(sls_due_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_due_dt AS VARCHAR) AS DATE)
+END sls_due_dt
+FROM bronze.crm_sales_details;
+
