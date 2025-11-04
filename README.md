@@ -124,10 +124,12 @@ For the Gold layer, the work mainly done is Data Integration, this involve the f
       - B. Logical Data Model: Here different columns are specified alongside primary keys and relationships between tables
       - C. Physical Data Model: All techinical details are specified like data taypes, database tecqniques etc. This prepares for               implementation in database
       - Focus for this project was to develop Logical Data Model
+      - <img width="1257" height="750" alt="image" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
+
+
   - Data model Types
       - Star Schema (Prefrence)
       - Snowflake Schema: Dimensions broken into further dimensions 
-
 - Build Data dictionary 
   
 
