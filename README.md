@@ -118,18 +118,26 @@ For the Gold layer, the work mainly done is Data Integration, this involve the f
 - #### Rename Columns to help business stakeholders understand and use effectively
 
 - #### Build Data Model
-  - Taking Raw Data, Organizing and structuring in eaay to understand format while describing relationship | LOGICAL DATA MODEL
-  -  3 stages of Data Model
+  - **Taking Raw Data, Organizing and structuring in eaay to understand format while describing relationship**
+  -  **3 stages of Data Model**
       - A. Conceptual Data Model: Here the focus is on the enetities and relationships between them, no details like attributes or               columns.
       - B. Logical Data Model: Here different columns are specified alongside primary keys and relationships between tables
       - C. Physical Data Model: All techinical details are specified like data taypes, database tecqniques etc. This prepares for               implementation in database
       - Focus for this project was to develop Logical Data Model
-      - <img width="1257" height="750" alt="image" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
+        <img width="1257" height="750" alt="image" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
 
 
-  - Data model Types
-      - Star Schema (Prefrence)
-      - Snowflake Schema: Dimensions broken into further dimensions 
+  - **Data model Types**
+      - Star Schema (Preference)
+      - Defining Relationship bewteen entities
+        - *(One mandatory to Many optional)* relationship between Dimension Customers and Dimension Product to Fact Sales as 1                 customer/product can record numerous amount of sales. Following this rules
+          - A. Customers/Product with no placed orders/sales
+          - B. Customers/Product with one (1) placed order/sale
+          - C. Customers/Product with multiple placed orders/sales
+         
+      <img width="902" height="683" alt="image" src="https://github.com/user-attachments/assets/1e786fd5-96ea-4f1a-ab0a-d03e937fc9bb" />
+
+ 
 - Build Data dictionary 
-  
+  Stored as 'data_catalog.md'. A data dictionary to help busines users understand data product for variosu projects has been          created.
 
