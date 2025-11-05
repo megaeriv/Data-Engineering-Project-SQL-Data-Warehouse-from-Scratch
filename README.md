@@ -96,11 +96,11 @@ This analysis can include sitting with source systems to analyze the business co
 - To develop effective data cleaning transformations and stored procedures for the bronze and silver layers, it’s essential to first understand the data flow and the relationships between datasets.
 
 
-# Data Flow
+##### Data Flow
 <img width="917" height="527" alt="Data Flow" src="https://github.com/user-attachments/assets/8398abfb-bbd4-416f-98c9-2d7c5f9f56df" />
 
 
-# Silver Integration Layer
+##### Silver Integration Layer
 <img width="1055" height="652" alt="Silver Integration Model" src="https://github.com/user-attachments/assets/15471251-0fb9-437d-b8c2-1bc15702c8bf" />
 
 
@@ -124,6 +124,8 @@ For the Gold layer, the work mainly done is Data Integration, this involve the f
       - B. Logical Data Model: Here different columns are specified alongside primary keys and relationships between tables
       - C. Physical Data Model: All techinical details are specified like data taypes, database tecqniques etc. This prepares for               implementation in database
       - Focus for this project was to develop Logical Data Model
+   
+        ##### Exploring Business Object
         <img width="1257" height="750" alt="image" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
 
 
@@ -134,10 +136,12 @@ For the Gold layer, the work mainly done is Data Integration, this involve the f
           - A. Customers/Product with no placed orders/sales
           - B. Customers/Product with one (1) placed order/sale
           - C. Customers/Product with multiple placed orders/sales
-         
-      <img width="902" height="683" alt="image" src="https://github.com/user-attachments/assets/1e786fd5-96ea-4f1a-ab0a-d03e937fc9bb" />
-
  
-- Build Data dictionary 
-  Stored as 'data_catalog.md'. A data dictionary to help busines users understand data product for variosu projects has been          created.
+        ##### Star Schema
+        <img width="905" height="702" alt="image" src="https://github.com/user-attachments/assets/afe36ed5-b310-4bf4-9c54-beb3fe309bf0" />
+
+- Build Data dictionary
+  Stored as 'data_catalog.md'. A data dictionary to help busines users understand data product for variosu projects has been  created.
+
+
 
