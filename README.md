@@ -140,7 +140,7 @@ The **Gold Layer** focuses on data integration, modeling, and presentation.
 
 > For this project, focus was placed on the **Logical Data Model**.
 
-#### Exploring Business Objects
+#### Data Integration
 <img width="1257" height="750" alt="Business Object Model" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
 
 ---
