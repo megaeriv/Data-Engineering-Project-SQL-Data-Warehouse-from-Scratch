@@ -1,40 +1,46 @@
-# Data Engineering Project: SQL Data Warehouse from Scratch
-This project is going to entail building a data warehouse from scatch unto reporting insights from the analysis of the data.
-I would deleiver this project with the best of industry practice in mengineering and analytics,  using Notion for planning, draw,io for dessign of architecture and SSMS.
+# 🧱 Data Engineering Project: SQL Data Warehouse from Scratch
 
+This project entails building a data warehouse from scratch and delivering analytical insights from the data.  
+I will deliver this project following **industry best practices** in **data engineering and analytics**, using **Notion** for planning, **draw.io** for architecture design, and **SSMS** for implementation.
 
-## Project Overview
+---
+
+## 🚀 Project Overview
+
 This project involves:
 
-1. Data Architecture: Designing a Modern Data Warehouse Using a chosen Architecture approach.
-2. ETL Pipelines: Extracting, transforming, and loading data from source systems into the warehouse.
-3. Data Modeling: Developing fact and dimension tables optimized for analytical queries.
-4. Analytics & Reporting: Creating SQL-based reports and dashboards for actionable insights.
+1. **Data Architecture:** Designing a modern data warehouse using an appropriate architecture approach.  
+2. **ETL Pipelines:** Extracting, transforming, and loading data from source systems into the warehouse.  
+3. **Data Modeling:** Developing fact and dimension tables optimized for analytical queries.  
+4. **Analytics & Reporting:** Creating SQL-based reports and dashboards for actionable insights.
 
-**Objective**
+### 🎯 Objective
+Develop a modern **SQL Server Data Warehouse** to consolidate sales data, enabling analytical reporting and informed decision-making.
 
-Develop a modern data warehouse using SQL Server to consolidate sales data, enabling analytical reporting and informed decision-making.
+### 🧾 Specifications
+- **Data Sources:** Import data from two systems (ERP and CRM) provided as CSV files.  
+- **Data Quality:** Cleanse and resolve data quality issues prior to analysis.  
+- **Integration:** Combine both sources into a single, user-friendly model designed for analytical queries.  
+- **Scope:** Focus on the latest dataset only; historization is not required.  
+- **Documentation:** Provide clear documentation of the data model for both business and analytics teams.
 
-**Specifications**
+---
 
-- Data Sources: Import data from two source systems (ERP and CRM) provided as CSV files.
-- Data Quality: Cleanse and resolve data quality issues prior to analysis.
-- Integration: Combine both sources into a single, user-friendly data model designed for analytical queries.
-- Scope: Focus on the latest dataset only; historization of data is not required.
-- Documentation: Provide clear documentation of the data model to support both business stakeholders and analytics teams.
+## 🏗️ Architecture
 
+The first step is to understand the type of data storage being built — in this case, a **data warehouse**.  
+Next, determine the **approach**: the **Medallion Architecture** was chosen.
 
-## Architecture
-Firts thing to do is to understand the type of data storage being buitt which has already dbeen identified as a data warehouse.
-Next thing is to understad determine what apprach would be used to buil this 
-The medallion approach has been identified 
-The medallion approach involves building Bronze(staging layer), Silver(Transformed layer), Gold(Serving layyer with Business logic) then Report
-
+This involves building three layers:
+- 🥉 **Bronze** (staging layer)
+- 🥈 **Silver** (transformation layer)
+- 🥇 **Gold** (serving layer for business logic and analytics)
 
 <img width="1754" height="656" alt="image" src="https://github.com/user-attachments/assets/f9f2a983-bc0d-43aa-96cb-0eaef28e0f80" />
 
+---
 
-### Layering
+### 🪶 Layering Overview
 
 |  | 🥉 `Bronze Layer` | 🥈 `Silver Layer` | 🥇 `Gold Layer` |
 |-------------|--------------|--------------|--------------|
@@ -47,101 +53,115 @@ The medallion approach involves building Bronze(staging layer), Silver(Transform
 | **Target Audience** | - Data Engineers | - Data Engineers<br>- Data Analysts | - Data Analysts<br>- Business Users |
 | **Separation of Concerns** | **INGEST** | **CLEAN** | **BUSINESS** |
 
-Separatin of concern - Making sure no layer does the job of another layer, this keeps the job very clean and organised.m Where no 2 layers do the same job.
+**Separation of Concerns:**  
+Each layer performs a distinct role — no overlap between ingestion, cleaning, and business logic.  
+This ensures a clean, organized, and maintainable data pipeline.
 
+---
 
-### Design
-<img width="1032" height="642" alt="image" src="https://github.com/user-attachments/assets/364e2e59-b5c4-4107-be55-ced70c03d941" />
+## 🧩 Design
 
+<img width="1032" height="642" alt="Design Diagram" src="https://github.com/user-attachments/assets/364e2e59-b5c4-4107-be55-ced70c03d941" />
 
-## Project Plan 
-Using Notion, every Epic and task is documented and in order
+---
 
-<img width="951" height="922" alt="image" src="https://github.com/user-attachments/assets/800a3752-d0d8-4b7f-8842-9bd962b2edac" />
+## 🗂️ Project Plan
 
-Project plan includes:
+All tasks and epics are managed in **Notion**, ensuring proper documentation and structure.
 
-1.  Define Naming Convention
-  This would placed as a stand alone document in this repository
+<img width="951" height="922" alt="Project Plan" src="https://github.com/user-attachments/assets/800a3752-d0d8-4b7f-8842-9bd962b2edac" />
 
-2. Create Database & Schema using SSMS
-  Database and schemas are created and named 'init_database.sql'
+### Project Plan Includes:
+1. **Naming Conventions** — Documented as a standalone file in this repository.  
+2. **Database & Schema Creation** — Implemented in SSMS and stored as `init_database.sql`.
 
-## Building Layers 🥉 Bronze -----> Silver 🥈
-First things first is to understand the source systems by analyzing before any coding so as to undertsand how to ingest the data, then validate while also dosumenting.
+---
 
-#### Analyzing
-This analysis can include sitting with source systems to analyze the business context and ownership of the data by asking the following questions
-- Business Context & Ownership
-  - Who owns the data
-  - What business Proecess does it support e,g logistics of finance reporting
-  - Systems & Data documentation
-  - Data Model & Data Catalog
+## 🥉 Building Layers: Bronze → Silver 🥈
 
-- Architecture & Technolgy Stack
-  - How is data stored (SQL server, Oracle, AWS, Azure...)
-  - What are the integration capabilities? (API, Kafka, File extract, Direct DB)
- 
-- Extract & Load
-  - Incremenata v Full load
-  - Data Scope & Historic needs
-  - What is the expected size of the extracts
-  - Are there any data volume limitations
-  - How to avoid impacting the source system's perfomance
-  - Autheneticationa and authorization (tokens, SSH keys, VPN, IP whitelisting)
+The first step is understanding the **source systems** by analyzing and validating their structure before ingestion.
 
+### 🔍 Analyzing
 
-#### Coding 
-- Ingestions, Transfromations, Validations and Loads (Data Completness & schema checks)
-- To develop effective data cleaning transformations and stored procedures for the bronze and silver layers, it’s essential to first understand the data flow and the relationships between datasets.
+Key questions to guide understanding:
 
+#### Business Context & Ownership
+- Who owns the data?  
+- What business processes does it support (e.g., logistics, finance)?  
+- What systems and documentation exist?  
+- What does the current data model look like?
 
-##### Data Flow
+#### Architecture & Technology Stack
+- Where is data stored? (SQL Server, Oracle, AWS, Azure...)  
+- What are the integration capabilities? (API, Kafka, file extracts, direct DB)  
+
+#### Extract & Load
+- Incremental vs. full load  
+- Data scope and historical needs  
+- Expected data size and limitations  
+- Minimizing performance impact on source systems  
+- Authentication and authorization (tokens, SSH, VPN, IP whitelisting)
+
+---
+
+### 💻 Coding
+
+Includes ingestion, transformation, validation, and completeness checks.
+
+> To develop effective data-cleaning transformations and stored procedures for the Bronze and Silver layers, it’s essential to first understand data flow and inter-table relationships.
+
+#### Data Flow
 <img width="917" height="527" alt="Data Flow" src="https://github.com/user-attachments/assets/8398abfb-bbd4-416f-98c9-2d7c5f9f56df" />
 
-
-##### Silver Integration Layer
+#### Silver Integration Model
 <img width="1055" height="652" alt="Silver Integration Model" src="https://github.com/user-attachments/assets/15471251-0fb9-437d-b8c2-1bc15702c8bf" />
 
+**Script Organization**
+1. `ddl_*.sql` → Defines database structures (DDL).  
+2. `data_cleaning_*.sql` → Step-by-step cleaning transformations.  
+3. `proc_*.sql` → Stored procedures for ETL loading.  
+4. `quality_checks_*.sql` → Validation and quality assurance tests.
 
-Scripts used are stored as below in scripts folders for the Bronze and Silver Layer
-  1. 'ddl_______.sql' in layer folder for Data Definition Language: it’s the part of SQL used to define, create, modify database structures.
-  2. 'Data Cleaning run through.sql' in layer folder showing step by step data cleaning involved in building each layer 
-  3. 'proc_______.sql' in layer folder for Proc = short for “Stored Procedure.” The stored procedure for loading data into the bronze or silver layer. A stored procedure is a saved SQL script that can be executed by name, like a function in programming.
-  4. 'quality_checks______.sql' store in 'Tests' folder for running quality checks on data stored in particular layer
+---
 
+## 🥇 Gold Layer
 
-### Gold Layer
-For the Gold layer, the work mainly done is Data Integration, this involve the following:
-- #### Buiding Buisness objects and determing type (Dimension or Fact)
+The **Gold Layer** focuses on data integration, modeling, and presentation.
 
-- #### Rename Columns to help business stakeholders understand and use effectively
+### Key Activities
+- **Build Business Objects:** Identify and classify tables (Dimensions vs. Facts).  
+- **Rename Columns:** Make names intuitive for business users.  
+- **Design Data Models:** Organize and structure data clearly with defined relationships.
 
-- #### Build Data Model
-  - **Taking Raw Data, Organizing and structuring in eaay to understand format while describing relationship**
-  -  **3 stages of Data Model**
-      - A. Conceptual Data Model: Here the focus is on the enetities and relationships between them, no details like attributes or               columns.
-      - B. Logical Data Model: Here different columns are specified alongside primary keys and relationships between tables
-      - C. Physical Data Model: All techinical details are specified like data taypes, database tecqniques etc. This prepares for               implementation in database
-      - Focus for this project was to develop Logical Data Model
-   
-        ##### Exploring Business Object
-        <img width="1257" height="750" alt="image" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
+### 🧠 Data Modeling Stages
+1. **Conceptual Model:** Defines entities and relationships (no attributes yet).  
+2. **Logical Model:** Specifies columns, keys, and relationships.  
+3. **Physical Model:** Adds data types, constraints, and database-specific design.  
 
+> For this project, focus was placed on the **Logical Data Model**.
 
-  - **Data model Types**
-      - Star Schema (Preference)
-      - Defining Relationship bewteen entities
-        - *(One mandatory to Many optional)* relationship between Dimension Customers and Dimension Product to Fact Sales as 1                 customer/product can record numerous amount of sales. Following this rules
-          - A. Customers/Product with no placed orders/sales
-          - B. Customers/Product with one (1) placed order/sale
-          - C. Customers/Product with multiple placed orders/sales
- 
-        ##### Star Schema
-        <img width="905" height="702" alt="image" src="https://github.com/user-attachments/assets/afe36ed5-b310-4bf4-9c54-beb3fe309bf0" />
+#### Exploring Business Objects
+<img width="1257" height="750" alt="Business Object Model" src="https://github.com/user-attachments/assets/d7e58441-b6f8-4a41-8791-ca497a893028" />
 
-- Build Data dictionary
-  Stored as 'data_catalog.md'. A data dictionary to help busines users understand data product for variosu projects has been  created.
+---
 
+### ⭐ Data Model Type: Star Schema
 
+Relationships:
+- **One-to-Many** between *Dimensions* (Customer, Product) and *Fact Sales*.  
+- Each customer or product can have multiple sales.
 
+Cases handled:
+- Customers/Products with **no orders**  
+- Customers/Products with **one order**  
+- Customers/Products with **multiple orders**
+
+#### Star Schema Diagram
+<img width="905" height="702" alt="Star Schema" src="https://github.com/user-attachments/assets/afe36ed5-b310-4bf4-9c54-beb3fe309bf0" />
+
+---
+
+### 📚 Data Dictionary
+
+Stored as `data_catalog.md`.  
+Provides clear definitions of all data fields for business and analytics users to understand the data product.
